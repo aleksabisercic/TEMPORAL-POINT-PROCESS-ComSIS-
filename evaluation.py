@@ -12,7 +12,7 @@ import pickle
 from simulation import Simulation
 
 
-def evaluate(train_df: pd.DataFrame, path, bin_size, model_name):
+def evaluate(train_df: pd.DataFrame, path, bin_size, model_name, dataset_type):
     """
     Get events per bin for each simulation for a given model
     
@@ -31,9 +31,15 @@ def evaluate(train_df: pd.DataFrame, path, bin_size, model_name):
                 - number of events by bin
                 - MAE by bin
     """
-
-    train = train_df[int(len(train_df.event_time.values) * 0.75):]
-    train = (train['event_time'] - train.event_time.min()) / 60
+    if dataset_type == 'autoput':
+        train = train_df[int(len(train_df.event_time.values) * 0.75):]
+        train = (train['event_time'] - train.event_time.min()) / 60
+    elif dataset_type == 'ski':
+        train = train_df[int(len(train_df.event_time.values)*0.97):]
+        train = (train['event_time'] - train.event_time.min()) #/ 60
+    else:
+        raise ValueError('dataset_type must be autoput or ski') 
+        
     train = train.to_frame()
     train.reset_index(inplace=True)
 
@@ -67,7 +73,7 @@ def evaluate(train_df: pd.DataFrame, path, bin_size, model_name):
     binned = pd.concat(binned_simulated + [binned_train.set_index('bin')], axis=1)
 
     binned.rename(columns={'train': 'Groun_truth'}
-                  ).to_csv(f'Results/{model_name}_{bin_size}.csv')
+                  ).to_csv(f'Results/{model_name}_{bin_size}_{dataset_type}.csv')
 
     def get_mae_data(binned_data):
         """
@@ -90,7 +96,7 @@ def evaluate(train_df: pd.DataFrame, path, bin_size, model_name):
 
     df_mae = get_mae_data(binned).drop(columns=['train'])
 
-    df_mae.to_csv(f'Results/MAE_DF_{model_name}_{bin_size}.csv')
+    df_mae.to_csv(f'Results/MAE_DF_{model_name}_{bin_size}_{dataset_type}.csv')
 
     def get__total_avrage_mae(df_mae):
         avrage_error = df_mae.mean().mean()
@@ -99,7 +105,11 @@ def evaluate(train_df: pd.DataFrame, path, bin_size, model_name):
     get__total_avrage_mae(df_mae)
 
 
-def get_simulation_times(model_filepath: str = "Hawks_Trapezoid_cpu.torch", no_sim: int = 1, time_upper: int = 500):
+def get_simulation_times(model_filepath: str = "Hawks_Trapezoid_cpu.torch", 
+                         no_sim: int = 1,
+                         time_upper: int = 500,
+                         dataset_type: str = 'autoput'
+                         ):
     """
     Levraging pretrained model for (CIF) generate event times 
     via Ogata’s modified thinning algorithm for n (no_sim) simulations
@@ -127,8 +137,10 @@ def get_simulation_times(model_filepath: str = "Hawks_Trapezoid_cpu.torch", no_s
         print(param)
 
     sim_model = Simulation(fun=mod, time_upper=time_upper, time_lower=0)
-    simulation = sim_model.simulate(no_simulation=no_sim)
-    print(simulation)
+    simulation = sim_model.simulate(no_simulation=no_sim, dataset=dataset_type)
+    
+    
+    #print(simulation)
 
     simulated_df = pd.DataFrame(simulation)
 
@@ -139,13 +151,17 @@ def get_simulation_times(model_filepath: str = "Hawks_Trapezoid_cpu.torch", no_s
     except IndexError:
         model_name = model_filepath.split('/')[1].split('_')[0]
 
-    real_data = pd.read_csv('data/stan1_traka1_01012017.csv')
+    if dataset_type == 'ski':
+        real_data = pd.read_csv('data/ski_kg_2005-2020.csv')
+    elif dataset_type == 'autoput':
+        real_data = pd.read_csv('data/stan1_traka1_01012017.csv')
 
     for bin_size in bin_sizes:
         print(f'{model_name} for bin_size: {bin_size} days')
         evaluate(path=simulated_df,
                  bin_size=bin_size,
                  train_df=real_data,
-                 model_name=model_name)
+                 model_name=model_name,
+                 dataset_type = dataset_type)
         print('\n')
 

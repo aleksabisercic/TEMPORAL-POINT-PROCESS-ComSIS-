@@ -4,7 +4,7 @@
 ## To run simulation 
 
 ```terminal
-python3 mian.py --time-upper 400 --no-sim 10000
+python3 mian.py --time-upper 400 --no-sim 10000 --no-sim 10000 --dataset-type 'autoput'
 ```
 
 ## __Purposed Methodology:__

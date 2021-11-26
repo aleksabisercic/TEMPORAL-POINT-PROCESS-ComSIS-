@@ -17,13 +17,13 @@ class Simulation:
         self.time_lower = time_lower
         self.mod = fun
 
-    def step_simulation(self, dataset='autoput', atributes=None, no_steps_max=500):
+    def step_simulation(self, dataset, atributes=None, no_steps_max=500):
         n = 0
         m = 0
         tn = [0]
         sm = self.time_lower
         if dataset == 'ski':
-            train_df = pd.read_csv('1.Proba.csv')
+            train_df = pd.read_csv('data/ski_kg_2005-2020.csv')
         elif dataset == 'autoput':
             train_df = pd.read_csv('data/stan1_traka1_01012017.csv')
 
@@ -55,6 +55,6 @@ class Simulation:
             m += 1
         return tn
 
-    def simulate(self, no_simulation=1):
-        simulation = [Simulation.step_simulation(self) for _ in range(no_simulation)]
+    def simulate(self, no_simulation=1, dataset: str = 'autoput'):
+        simulation = [Simulation.step_simulation(self, dataset) for _ in range(no_simulation)]
         return simulation
