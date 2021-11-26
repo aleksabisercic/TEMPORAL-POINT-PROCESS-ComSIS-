@@ -139,7 +139,7 @@ def get_simulation_times(model_filepath: str = "Hawks_Trapezoid_cpu.torch", no_s
     except IndexError:
         model_name = model_filepath.split('/')[1].split('_')[0]
 
-    real_data = pd.read_csv('stan1_traka1_01012017.csv')
+    real_data = pd.read_csv('data/stan1_traka1_01012017.csv')
 
     for bin_size in bin_sizes:
         print(f'{model_name} for bin_size: {bin_size} days')

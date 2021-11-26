@@ -25,7 +25,7 @@ class Simulation:
         if dataset == 'ski':
             train_df = pd.read_csv('1.Proba.csv')
         elif dataset == 'autoput':
-            train_df = pd.read_csv('stan1_traka1_01012017.csv')
+            train_df = pd.read_csv('data/stan1_traka1_01012017.csv')
 
         while sm < self.time_upper:
             time = np.linspace(sm, self.time_upper, no_steps_max)
