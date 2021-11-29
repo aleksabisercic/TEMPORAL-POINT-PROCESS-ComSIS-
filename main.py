@@ -1,49 +1,23 @@
+# argument parser and system
+import argparse
+import sys
 import glob
 import os
 # moduls for multiprocessing
 import functools
 import multiprocessing
+# relative imports
 from evaluation import get_simulation_times
-import argparse
+
 
 
 def get_models(folder: str = 'best_autoput_models', model_ext: str = '*.torch'):
     """Concat multiple .csv files into single df"""
     location_of_documents = os.path.join(folder, model_ext)  # get all docs from glue
     return list(glob.glob(location_of_documents))
-
-
-def main(args):
     
-    dataset_type = args.dataset_type
-    
-    if dataset_type == 'ski':
-        models = get_models(folder = 'best_ski_models')
-    else:
-        models = get_models()
-    # get partial funcion of funcion get_simulation_times()
-    # in order to work with multiprocessing
-    processing_funcion = functools.partial(get_simulation_times,
-                                           time_upper=args.time_upper,
-                                           no_sim=args.no_sim,
-                                           dataset_type = args.dataset_type)
 
-    # Run multiprocessing
-    processes = []
-    # each subset of dfs is a unique process
-    for index, model in enumerate(models):
-        print(f'Process model: {index + 1}, out of {len(models)}')
-        p = multiprocessing.Process(target=processing_funcion, args=(model,))
-        p.start()
-        processes.append(p)
-
-    for process in processes:
-        process.join()
-
-    print('DONE')
-    
-    
-def main2(args):
+def mian(args):
     """
     Optimized main()
     """
@@ -67,19 +41,6 @@ def main2(args):
     p.map(processing_funcion, models)
     
     print('DONE')
-
-def test(dataset_type = 'ski'):
-    
-    if dataset_type == 'ski':
-        models = get_models(folder = 'best_ski_models')
-    else:
-        models = get_models()
-        
-    for model in models:
-        get_simulation_times(model_filepath = model,
-                             time_upper = 300, 
-                             no_sim = 1,
-                             dataset_type = dataset_type)
 
 
 def parse_args():
@@ -105,11 +66,9 @@ if __name__ == "__main__":
      args = parse_args()
      print('Loaded arguments:')
      print(args)
-    
-     # import sys
-    
-     # sys.path.append('./')
-     # sys.path.append('./models')
-     main2(args)
-     # print('BEGINGIN TEST')
-     # test()
+     
+    # append paths to models    
+     sys.path.append('./')
+     sys.path.append('./models')
+     # run main
+     mian(args)
