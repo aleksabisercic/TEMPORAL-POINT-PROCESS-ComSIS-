@@ -1,4 +1,7 @@
-# MACHINE LEARNING APPROACH FOR LEARNING TEMPORAL POINT PROCESS
+# A machine learning approach for learning temporal point process
+> [Computer Science and Information Systems 2022 Volume 19, Issue 2, Pages: 1007-1022](https://doiserbia.nb.rs/Article.aspx?id=1820-02142200016P)
+
+*Despite a vast application of temporal point processes in infectious disease diffusion forecasting, ecommerce, traffic prediction, preventive maintenance, etc, there is no significant development in improving the simulation and prediction of temporal point processes in real-world environments. With this problem at hand, we propose a novel methodology for learning temporal point processes based on one-dimensional numerical integration techniques. These techniques are used for linearising the negative maximum likelihood (neML) function and enabling backpropagation of the neML derivatives. Our approach is tested on two real-life datasets. Firstly, on high frequency point process data, (prediction of highway traffic) and secondly, on a very low frequency point processes dataset, (prediction of ski injuries in ski resorts). Four different point process baseline models were compared: second-order Polynomial inhomogeneous process, Hawkes process with exponential kernel, Gaussian process, and Poisson process. The results show the ability of the proposed methodology to generalize on different datasets and illustrate how different numerical integration techniques and mathematical models influence the quality of the obtained models. The presented methodology is not limited to these datasets and can be further used to optimize and predict other processes that are based on temporal point processes.*
 
 ### **Setup**
 
